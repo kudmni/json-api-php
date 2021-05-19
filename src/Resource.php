@@ -226,13 +226,13 @@ class Resource implements ElementInterface
     }
 
     /**
-     * Asssign value by keys chain
+     * Assign value by keys chain
      *
-     * @param $array Result
-     * @param $values All values
-     * @param $keys Keys chain
+     * @param array $array Result
+     * @param array $values All values
+     * @param array $keys Keys chain
      */
-    protected function arrayAssign(array &$array, array $values, $keys)
+    protected function arrayAssign(array &$array, array $values, array $keys)
     {
         $key = array_shift($keys);
         if (array_key_exists($key, $values)) {

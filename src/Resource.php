@@ -232,14 +232,14 @@ class Resource implements ElementInterface
      * @param $values All values
      * @param $keys Keys chain
      */
-    protected function arrayAssign(&$array, $values, $keys)
+    protected function arrayAssign(array &$array, array $values, $keys)
     {
         $key = array_shift($keys);
         if (array_key_exists($key, $values)) {
             if (empty($keys)) {
                 $array[$key] = $values[$key];
             } else {
-                $array[$key] = $array[$key] ?? [];
+                $array[$key] = isset($array[$key]) ? $array[$key] : [];
                 $this->arrayAssign($array[$key], $values[$key], $keys);
             }
         }

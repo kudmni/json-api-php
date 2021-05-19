@@ -213,11 +213,36 @@ class Resource implements ElementInterface
      */
     protected function filterFields(array $fields)
     {
-        if ($requested = $this->getOwnFields()) {
-            $fields = array_intersect_key($fields, array_flip($requested));
+        $requestedFields = $this->getOwnFields();
+        if (empty($requestedFields)) {
+            return $fields;
         }
+        $filteredFields = [];
+        foreach ($requestedFields as $requestedField) {
+            $requestedFieldArray = explode('.', $requestedField);
+            $this->arrayAssign($filteredFields, $fields, $requestedFieldArray);
+        }
+        return $filteredFields;
+    }
 
-        return $fields;
+    /**
+     * Asssign value by keys chain
+     *
+     * @param $array Result
+     * @param $values All values
+     * @param $keys Keys chain
+     */
+    protected function arrayAssign(&$array, $values, $keys)
+    {
+        $key = array_shift($keys);
+        if (array_key_exists($key, $values)) {
+            if (empty($keys)) {
+                $array[$key] = $values[$key];
+            } else {
+                $array[$key] = $array[$key] ?? [];
+                $this->arrayAssign($array[$key], $values[$key], $keys);
+            }
+        }
     }
 
     /**

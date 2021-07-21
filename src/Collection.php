@@ -22,9 +22,10 @@ class Collection implements ElementInterface
      * Create a new collection instance.
      *
      * @param mixed $data
-     * @param \Tobscure\JsonApi\SerializerInterface $serializer
+     * @param \Tobscure\JsonApi\SerializerInterface|null $serializer
+     * @throws \Exception
      */
-    public function __construct($data, SerializerInterface $serializer)
+    public function __construct($data, SerializerInterface $serializer = null)
     {
         $this->resources = $this->buildResources($data, $serializer);
     }
@@ -33,22 +34,22 @@ class Collection implements ElementInterface
      * Convert an array of raw data to Resource objects.
      *
      * @param mixed $data
-     * @param SerializerInterface $serializer
-     *
+     * @param \Tobscure\JsonApi\SerializerInterface|null $serializer
      * @return \Tobscure\JsonApi\Resource[]
+     * @throws \Exception
      */
-    protected function buildResources($data, SerializerInterface $serializer)
+    protected function buildResources($data, SerializerInterface $serializer = null)
     {
         $resources = [];
-
         foreach ($data as $resource) {
-            if (! ($resource instanceof Resource)) {
-                $resource = new Resource($resource, $serializer);
+            if ($resource instanceof Resource) {
+                $resources[] = $resource;
+            } elseif ($serializer) {
+                $resources[] = new Resource($resource, $serializer);
+            } else {
+                throw new \Exception('Serializer not set for raw data');
             }
-
-            $resources[] = $resource;
         }
-
         return $resources;
     }
 
